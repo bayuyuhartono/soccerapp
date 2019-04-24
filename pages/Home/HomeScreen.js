@@ -14,7 +14,7 @@ export default class HomeScreen extends React.Component {
   }
 
   getListCall(){
-        return fetch('https://apifootball.com/api/?action=get_standings&league_id=62&APIkey=b96fbe0d0ae829943a353137fd1825624a627d8ddce4ce3572a24ce58ee51d92')
+        return fetch('https://apifootball.com/api/?action=get_standings&league_id=62&APIkey=400459e0d536036a53b2ce93f998f330a6d09cab19a7bfd543609fdfe0e6c534')
         .then((response) => response.json())
         .then((responseJson) => {  
           responseJson.sort((a, b) => a.overall_league_position - b.overall_league_position); //sort data json fetch

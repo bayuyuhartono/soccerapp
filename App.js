@@ -3,12 +3,14 @@ import Routes from "./src/Routes";
 import SplashScreen from "./pages/Login/SplashScreen";
 import SignInScreen from "./pages/Login/LoginScreen";
 import SignupScreen from "./pages/Login/SignupScreen";
+import OtpScreen from "./pages/Login/OtpScreen";
 
 // const AppStack = createStackNavigator({ Home: HomeScreen, Other: OtherScreen });
  
 const AuthStack = createStackNavigator({ 
   SignIn: SignInScreen,
-  SignUp: SignupScreen 
+  SignUp: SignupScreen,
+  OTP: OtpScreen
 });
 
 export default createAppContainer(createSwitchNavigator(

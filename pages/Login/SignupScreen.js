@@ -4,28 +4,94 @@ import {
   Text,
   View,
   TouchableOpacity,
-  TextInput
+  TextInput,
+  Alert
 } from "react-native";
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from "@react-native-community/async-storage";
 import Logo from "../../src/components/Logo";
-import { StackActions, NavigationActions } from 'react-navigation';
+import { StackActions, NavigationActions } from "react-navigation";
+import Frisbee from "frisbee";
+import SmsRetriever from "react-native-sms-retriever";
+
+const api = new Frisbee({
+  baseURI: "http://172.20.151.203/soccer_api/public/",
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json"
+  }
+});
 
 export default class SignupScreen extends React.Component {
+  // hide navbartop
+  static navigationOptions = {
+    title: "SignUp",
+    headerStyle: {
+      backgroundColor: "#FFC107"
+    },
+    headerTintColor: "#fff",
+    header: null
+  };
 
-    // hide navbartop
-    static navigationOptions =
-    {
-       title: 'SignUp',
-       headerStyle: {
-       backgroundColor: '#FFC107'
-     },
-     headerTintColor: '#fff',
-     header : null
-    };
+  // Get the phone number (first gif)
+  _onPhoneNumberPressed = async () => {
+    try {
+      const phoneNumber = await SmsRetriever.requestPhoneNumber();
+    } catch (error) {
+      console.log(JSON.stringify(error));
+    }
+  };
 
-  _signInAsync = async () => {
-    await AsyncStorage.setItem('userToken', 'abc');
-    this.props.navigation.navigate('App');
+  // Get the SMS message (second gif)
+  _onSmsListenerPressed = async () => {
+    try {
+      const registered = await SmsRetriever.startSmsRetriever();
+      if (registered) {
+        SmsRetriever.addSmsListener(event => {
+          console.log(event.message);
+          Alert.alert("", "pppp", [
+            {
+              text: "OK"
+            }
+          ]);
+          SmsRetriever.removeSmsListener();
+        });
+      }
+    } catch (error) {
+      console.log(JSON.stringify(error));
+    }
+  };
+
+  _signUpOTP = () => {
+    setTimeout(async () => {
+      try {
+        const res = await api.get("/sendsmsNexmo", {});
+        if (res.err) throw res.err;
+        this.setState({
+          enterCode: true
+        });
+
+        setTimeout(() => {
+          Alert.alert("Sent!", "We've sent you a verification code", [
+            {
+              text: "OK"
+            }
+          ]);
+        }, 100);
+
+        this.props.navigation.dispatch(
+          StackActions.reset({
+            index: 0,
+            actions: [NavigationActions.navigate({ routeName: "OTP" })]
+          })
+        );
+        
+      } catch (err) {
+        // <https://github.com/niftylettuce/react-native-loading-spinner-overlay/issues/30#issuecomment-276845098>
+        setTimeout(() => {
+          Alert.alert("Oops!", err.message);
+        }, 100);
+      }
+    }, 100);
   };
 
   render() {
@@ -34,72 +100,77 @@ export default class SignupScreen extends React.Component {
         <Logo />
 
         <View style={styles.container2}>
-        <TextInput
-          style={styles.inputBox}
-          underlineColorAndroid="rgba(0,0,0,0)"
-          placeholder="Nama"
-          placeholderTextColor="#ffffff"
-          selectionColor="#fff"
-          keyboardType="email-address"
-          // onSubmitEditing={() => this.email.focus()}
-        />
-        <TextInput
-          style={styles.inputBox}
-          underlineColorAndroid="rgba(0,0,0,0)"
-          placeholder="Email"
-          placeholderTextColor="#ffffff"
-          selectionColor="#fff"
-          // onSubmitEditing={() => this.password.focus()}
-        />
+          <TextInput
+            style={styles.inputBox}
+            underlineColorAndroid="rgba(0,0,0,0)"
+            placeholder="Nama"
+            placeholderTextColor="#ffffff"
+            selectionColor="#fff"
+            // onSubmitEditing={() => this.nomor.focus()}
+          />
+          <TextInput
+            style={styles.inputBox}
+            underlineColorAndroid="rgba(0,0,0,0)"
+            placeholder="Nomor Handphone"
+            placeholderTextColor="#ffffff"
+            selectionColor="#fff"
+            // onSubmitEditing={() => this.email.focus()}
+          />
+          <TextInput
+            style={styles.inputBox}
+            underlineColorAndroid="rgba(0,0,0,0)"
+            placeholder="Email"
+            placeholderTextColor="#ffffff"
+            selectionColor="#fff"
+            keyboardType="email-address"
+            // onSubmitEditing={() => this.password.focus()}
+          />
 
-        <TextInput
-          style={styles.inputBox}
-          underlineColorAndroid="rgba(0,0,0,0)"
-          placeholder="Password"
-          secureTextEntry={true}
-          placeholderTextColor="#ffffff"
-          // onSubmitEditing={() => this.confirm.focus()}
-        />
+          <TextInput
+            style={styles.inputBox}
+            underlineColorAndroid="rgba(0,0,0,0)"
+            placeholder="Password"
+            secureTextEntry={true}
+            placeholderTextColor="#ffffff"
+            // onSubmitEditing={() => this.confirm.focus()}
+          />
 
-        <TextInput
-          style={styles.inputBox}
-          underlineColorAndroid="rgba(0,0,0,0)"
-          placeholder="Confirm Password"
-          placeholderTextColor="#ffffff"
-          selectionColor="#fff"
-          // ref={input => (this.confirm = input)}
-        />
+          <TextInput
+            style={styles.inputBox}
+            underlineColorAndroid="rgba(0,0,0,0)"
+            placeholder="Confirm Password"
+            placeholderTextColor="#ffffff"
+            selectionColor="#fff"
+            // ref={input => (this.confirm = input)}
+          />
 
-        <TouchableOpacity onPress={this._signInAsync} style={styles.button}>
-          <Text style={styles.buttonText}>Sign Up</Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity onPress={this._signUpOTP} style={styles.button}>
+            <Text style={styles.buttonText}>Sign Up</Text>
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.signupTextCont}>
           <Text style={styles.signupText}>Have an account yet?</Text>
 
-          <TouchableOpacity onPress={() => {
-            this.props.navigation.dispatch(StackActions.reset({
-              index: 0,
-              actions: [
-                NavigationActions.navigate({ routeName: 'SignIn' })
-              ],
-            }))
-          }}>
+          <TouchableOpacity
+            onPress={() => {
+              this.props.navigation.dispatch(
+                StackActions.reset({
+                  index: 0,
+                  actions: [NavigationActions.navigate({ routeName: "SignIn" })]
+                })
+              );
+            }}
+          >
             <Text style={styles.signupButton}> Login</Text>
           </TouchableOpacity>
         </View>
       </View>
     );
-  }    
+  }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   container1: {
     backgroundColor: "#455a64",
     flex: 1,

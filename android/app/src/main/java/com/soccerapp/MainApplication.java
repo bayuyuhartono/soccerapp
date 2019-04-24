@@ -3,6 +3,7 @@ package com.soccerapp;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import me.furtado.smsretriever.RNSmsRetrieverPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
@@ -26,6 +27,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNSmsRetrieverPackage(),
             new AsyncStoragePackage(),
             new VectorIconsPackage(),
             new RNGestureHandlerPackage()

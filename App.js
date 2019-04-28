@@ -4,6 +4,7 @@ import SplashScreen from "./pages/Login/SplashScreen";
 import SignInScreen from "./pages/Login/LoginScreen";
 import SignupScreen from "./pages/Login/SignupScreen";
 import OtpScreen from "./pages/Login/OtpScreen";
+import { pushNotifications } from './src/services';
 
 // const AppStack = createStackNavigator({ Home: HomeScreen, Other: OtherScreen });
  
@@ -12,6 +13,8 @@ const AuthStack = createStackNavigator({
   SignUp: SignupScreen,
   OTP: OtpScreen
 });
+
+pushNotifications.configure();
 
 export default createAppContainer(createSwitchNavigator(
   {

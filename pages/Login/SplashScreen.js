@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text } from "react-native";
 import AsyncStorage from "@react-native-community/async-storage";
+import firebase from "react-native-firebase";
 
 class SplashScreen extends React.Component {
   constructor(props) {
@@ -23,15 +24,20 @@ class SplashScreen extends React.Component {
 
     // This will switch to the App screen or Auth screen and this loading
     // screen will be unmounted and thrown away.
-    if (data !== null) {
-      this.props.navigation.navigate(userToken ? "App" : "Auth");
-    }
+    // if (data !== null) {
+    //   this.props.navigation.navigate(userToken ? "App" : "Auth");
+    // }
+
+    firebase.auth().onAuthStateChanged(user => {
+      this.props.navigation.navigate(user ? "App" : "Auth");
+    });
+
   };
 
   render() {
     return (
       <View style={styles.viewStyles}>
-        <Text style={styles.textStyles}>Blitz Reading</Text>
+        <Text style={styles.textStyles}>Splash Screen</Text>
       </View>
     );
   }

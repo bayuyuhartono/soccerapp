@@ -6,9 +6,9 @@ import {
   TouchableOpacity,
   TextInput
 } from "react-native";
-import AsyncStorage from '@react-native-community/async-storage';
 import Logo from "../../src/components/Logo";
 import { StackActions, NavigationActions } from 'react-navigation';
+import firebase from 'react-native-firebase'
 
 export default class LoginScreen extends React.Component {
 
@@ -23,10 +23,15 @@ export default class LoginScreen extends React.Component {
     header : null
    };
 
-  _signInAsync = async () => {
-    await AsyncStorage.setItem('userToken', 'abc');
-    this.props.navigation.navigate('App');
-  };
+   state = { email: '', password: '', errorMessage: null }
+   handleLogin = () => {
+    const { email, password } = this.state
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(() => this.props.navigation.navigate('Main'))
+      .catch(error => this.setState({ errorMessage: error.message }))
+  }
 
   render() {
     return (
@@ -41,7 +46,8 @@ export default class LoginScreen extends React.Component {
           placeholderTextColor="#ffffff"
           selectionColor="#fff"
           keyboardType="email-address"
-          onSubmitEditing={() => this.password.focus()}
+          onChangeText={email => this.setState({ email })}
+          value={this.state.email}
         />
 
         <TextInput
@@ -50,10 +56,11 @@ export default class LoginScreen extends React.Component {
           placeholder="Password"
           secureTextEntry={true}
           placeholderTextColor="#ffffff"
-          ref={input => (this.password = input)}
+          onChangeText={password => this.setState({ password })}
+          value={this.state.password}
         />
 
-        <TouchableOpacity onPress={this._signInAsync} style={styles.button}>
+        <TouchableOpacity onPress={this.handleLogin} style={styles.button}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
       </View>

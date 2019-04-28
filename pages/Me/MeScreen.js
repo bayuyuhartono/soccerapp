@@ -1,23 +1,34 @@
-import React from 'react';
-import { Text, View, Button } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+import React from "react";
+import { StyleSheet, Button, Text, View } from "react-native";
+import firebase from 'react-native-firebase'
 
-export default class MeScreen extends React.Component {
+export default class MatchScreen extends React.Component {
 
-  _signOutAsync = async () => {
-    await AsyncStorage.clear();
-    this.props.navigation.navigate('Auth');
-  };
+  state = { currentUser: null };
+
+  componentDidMount() {
+    const { currentUser } = firebase.auth()
+    this.setState({ currentUser })
+}
 
   render() {
+    const { currentUser } = this.state;
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Me!</Text>
+      <View style={styles.container}>
+        <Text>Hi {currentUser && currentUser.email}!</Text>
         <Button
-          title="Sign Out"
-          onPress={this._signOutAsync}
-        />
+         title="Sign out"
+         onPress={() => firebase.auth().signOut()} 
+         />
       </View>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
+  }
+});

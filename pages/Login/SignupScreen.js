@@ -7,11 +7,11 @@ import {
   TextInput,
   Alert
 } from "react-native";
-import AsyncStorage from "@react-native-community/async-storage";
 import Logo from "../../src/components/Logo";
 import { StackActions, NavigationActions } from "react-navigation";
 import Frisbee from "frisbee";
 import SmsRetriever from "react-native-sms-retriever";
+import firebase from 'react-native-firebase'
 
 const api = new Frisbee({
   baseURI: "http://172.20.151.203/soccer_api/public/",
@@ -31,6 +31,15 @@ export default class SignupScreen extends React.Component {
     headerTintColor: "#fff",
     header: null
   };
+
+  state = { email: '', password: '', errorMessage: null }
+  handleSignUp = () => {
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(this.state.email, this.state.password)
+      .then(() => this.props.navigation.navigate('App'))
+      .catch(error => this.setState({ errorMessage: error.message }))
+  }
 
   // Get the phone number (first gif)
   _onPhoneNumberPressed = async () => {
@@ -103,27 +112,12 @@ export default class SignupScreen extends React.Component {
           <TextInput
             style={styles.inputBox}
             underlineColorAndroid="rgba(0,0,0,0)"
-            placeholder="Nama"
-            placeholderTextColor="#ffffff"
-            selectionColor="#fff"
-            // onSubmitEditing={() => this.nomor.focus()}
-          />
-          <TextInput
-            style={styles.inputBox}
-            underlineColorAndroid="rgba(0,0,0,0)"
-            placeholder="Nomor Handphone"
-            placeholderTextColor="#ffffff"
-            selectionColor="#fff"
-            // onSubmitEditing={() => this.email.focus()}
-          />
-          <TextInput
-            style={styles.inputBox}
-            underlineColorAndroid="rgba(0,0,0,0)"
             placeholder="Email"
             placeholderTextColor="#ffffff"
             selectionColor="#fff"
             keyboardType="email-address"
-            // onSubmitEditing={() => this.password.focus()}
+            onChangeText={email => this.setState({ email })}
+            value={this.state.email} 
           />
 
           <TextInput
@@ -132,19 +126,11 @@ export default class SignupScreen extends React.Component {
             placeholder="Password"
             secureTextEntry={true}
             placeholderTextColor="#ffffff"
-            // onSubmitEditing={() => this.confirm.focus()}
+            onChangeText={password => this.setState({ password })}
+            value={this.state.password}
           />
 
-          <TextInput
-            style={styles.inputBox}
-            underlineColorAndroid="rgba(0,0,0,0)"
-            placeholder="Confirm Password"
-            placeholderTextColor="#ffffff"
-            selectionColor="#fff"
-            // ref={input => (this.confirm = input)}
-          />
-
-          <TouchableOpacity onPress={this._signUpOTP} style={styles.button}>
+          <TouchableOpacity onPress={this.handleSignUp} style={styles.button}>
             <Text style={styles.buttonText}>Sign Up</Text>
           </TouchableOpacity>
         </View>

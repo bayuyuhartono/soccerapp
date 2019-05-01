@@ -68,14 +68,7 @@ export default class LoginScreen extends React.Component {
         <View style={styles.signupTextCont}>
           <Text style={styles.signupText}>Dont have an account yet?</Text>
 
-          <TouchableOpacity onPress={() => {
-            this.props.navigation.dispatch(StackActions.reset({
-              index: 0,
-              actions: [
-                NavigationActions.navigate({ routeName: 'SignUp' })
-              ],
-            }))
-          }}>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('SignUp')}>
             <Text style={styles.signupButton}> Signup</Text>
           </TouchableOpacity>
         </View>

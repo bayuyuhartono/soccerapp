@@ -1,56 +1,69 @@
-import { createBottomTabNavigator, createAppContainer, createStackNavigator } from 'react-navigation';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import React from "react";
+import {
+  createBottomTabNavigator,
+  createAppContainer,
+  createStackNavigator
+} from "react-navigation";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import HomeScreen from "../pages/Home/HomeScreen";
 import MatchScreen from "../pages/Match/MatchScreen";
-import DetailMatch from "../pages/Match/DetailMatch";
+import RepoScreen from "../pages/Repo/RepoScreen";
+import AddScreen from "../pages/Repo/AddScreen";
+import DetailScreen from "../pages/Repo/DetailScreen";
+import EditScreen from "../pages/Repo/EditScreen";
 import MeScreen from "../pages/Me/MeScreen";
 
 const HomeStack = createStackNavigator({
-  Home: HomeScreen,
-  Details: DetailMatch,
+  Home: HomeScreen
+});
+ 
+const MatchStack = createStackNavigator({
+  Match: MatchScreen
 });
 
-const MatchStack = createStackNavigator({
-  Match: MatchScreen,
+const RepoStack = createStackNavigator({
+  Repo: RepoScreen,
+  Add: AddScreen,
+  RepoDetail: DetailScreen,
+  RepoEdit: EditScreen
 });
 
 const MeStack = createStackNavigator({
-  Me: MeScreen,
+  Me: MeScreen
 });
 
-export default createAppContainer(createBottomTabNavigator(
-  {
-    Home: HomeStack,
-    Match: MatchStack,
-    Me: MeStack,
-  },
-  {
-    /* Other configuration remains unchanged */
-  }
-));
-
-// import React from "react";
-// import { Router, Stack, Scene } from "react-native-router-flux";
-
-// import LoginScreen from "../pages/Login/LoginScreen";
-// import SignupScreen from "../pages/Login/SignupScreen";
-// import HomeScreen from "../pages/Home/HomeScreen";
-// import MatchScreen from "../pages/Match/MatchScreen";
-// import DetailMatch from "../pages/Match/DetailMatch";
-// import MeScreen from "../pages/Me/MeScreen";
-
-// export default class Routes extends React.Component {
-//   render() {
-//     return (
-//       <Router>
-//         <Stack key="root" hideNavBar={true}>
-//           <Scene key="Login" component={LoginScreen} title="Login" initial={true} />
-//           <Scene key="Signup" component={SignupScreen} title="Register" />
-//           <Scene key="Home" component={HomeScreen} title="HomeScreen" />
-//           <Scene key="DetailMatch" component={DetailMatch} title="DetailMatch" />
-//           <Scene key="Me" component={MeScreen} title="MeScreen" />
-//         </Stack>
-//       </Router>
-//     );
-//   }
-// }
+export default createAppContainer(
+  createBottomTabNavigator(
+    {
+      Home: HomeStack,
+      Match: MatchStack,
+      Repository: RepoStack,
+      Me: MeStack
+    },
+    {
+      defaultNavigationOptions: ({ navigation }) => ({
+        tabBarIcon: ({ focused, tintColor }) => {
+          const { routeName } = navigation.state;
+          let IconComponent = Ionicons;
+          let iconName;
+          if (routeName === 'Home') {
+            iconName = `ios-home`;
+          } else if (routeName === 'Match') {
+            iconName = `ios-pulse`;
+          } else if (routeName === 'Repository') {
+            iconName = `ios-chatboxes`;
+          } else if (routeName === 'Me') {
+            iconName = `ios-body`;
+          }
+  
+          // You can return any component that you like here!
+          return <IconComponent name={iconName} size={25} color={tintColor} />;
+        },
+      }),
+      tabBarOptions: {
+        activeTintColor: 'tomato',
+        inactiveTintColor: 'gray',
+      },
+    }
+  )
+);
